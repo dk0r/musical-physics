@@ -2,7 +2,7 @@
 // Name        : leap-frog.cpp
 // Author      : dk0r
 // Version     :
-// Copyright   : 
+// Copyright   :
 // Description : Hello World in C++, Ansi-style
 //============================================================================
 
@@ -10,6 +10,6 @@
 using namespace std;
 
 int main() {
-	cout << "test!" << endl; // prints
+	cout << "test!szxss" << endl; // prints
 	return 0;
 }
