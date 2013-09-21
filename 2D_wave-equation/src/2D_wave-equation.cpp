@@ -3,11 +3,13 @@
 // Author      : dk0r
 // Version     :
 // Copyright   : 
-// Description : Hello World in C++, Ansi-style
+// Description :
 //============================================================================
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <string>
 #include <cmath>
 #include "nr3.h"
 #include "rk4.h"
@@ -31,6 +33,17 @@ double globeDT = 0; //global step tracking
 double rho = 0; // volumetric? surface or linear density?
 double tension = 35; //newtons
 
+//Misc.
+ofstream of;
+
+int fileNamerCounter = 0;
+string make_filename( const string& basename, const string& ext )
+  {
+  ostringstream result;
+  result << basename << fileNamerCounter << ext;
+  fileNamerCounter++;
+  return result.str();
+  }
 
 void wave()
 {
@@ -121,9 +134,31 @@ void wave()
 		}
 
 
+	//File Output
+		of.open(make_filename( "/home/dk0r/git/musical-phys/2D_wave-equation/csv/psi", ".csv" ).c_str());
 
 
-	//DO The FILE OUTPUT HERE !!!!!!!!!!!!!!!!!!!!!!@!#$!@#%!#%
+		for(int i=0; i<n ;i++)
+		 {
+			 for(int j=0; j<n ;j++)
+			 {
+					of << i << "," << j << "," << psi[i][j] << "\n";
+			 }
+		 }
+
+		of.close();
+		 jacobiCounter++;
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -142,100 +177,11 @@ void wave()
 	}
 
 
-
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	//*****************************************************************************************************8
-	//*****************************************************************************************************8
-	//*****************************************************************************************************8
-	//*****************************************************************************************************8
-	//*****************************************************************************************************8
-	//*****************************************************************************************************8
-	//*****************************************************************************************************8
-	//*****************************************************************************************************8
-
-	double temp[x][y];
-	double original[x][y];
-
-	double outterTemp = 0;
-	double innerTemp = 10;
-
-	bool donotcompute[x][y];
-
-	//initializes grid
-	 for(int ix=0; ix<n; ix++)
-	 {
-		 for (int iy=0; iy<n; iy++)
-		 {
-			 donotcompute[ix][iy] = false;
-			 temp[ix][iy] = 0.0;
-			 original[ix][iy] = 0.0;
-		 }
-	 }
-
-
-/*
-	 //defines: An upper horizontal amplitude
-	 for(int iy=1; iy<(n-1); iy++)
-	 {
-		 donotcompute[0][iy] = true;
-
-		 temp[0][iy] = innerTemp;
-		 original[0][iy] = innerTemp;
-	 }
-*/
-
-
-	 //defines: A lower horizontal amplitude
-	 for(int iy=1; iy<(n-1); iy++)
-	 {
-		 donotcompute[n-1][iy] = true;
-
-		 temp[n-1][iy] = innerTemp;
-		 original[n-1][iy] = innerTemp;
-	 }
-
-
-	 //defines left and right vertical boundary conditions
-	 for(int ix=0; ix<n; ix++)
-	 {
-		 donotcompute[ix][0] = true;
-		 donotcompute[ix][n-1] = true;
-
-		 temp[ix][0] = outterTemp;
-		 temp[ix][n-1] = outterTemp;
-
-		 original[ix][0] = outterTemp;
-		 original[ix][n-1] = outterTemp;
-
-
-
-
-
-
 }
 
-int main()
-{
-
-	wave();
-
-	return 0;
-
-}
+	 int main()
+	 {
+		 cout << "some shit\n";
+		 return 0;
+	 }
