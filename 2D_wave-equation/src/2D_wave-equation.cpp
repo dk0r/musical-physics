@@ -28,28 +28,22 @@ double pastT = 0;
 double dt = 0.01;  //time stepping
 int kmax = 1000; //max iterations
 double globeDT = 0; //global step tracking
+double rho = 0; // volumetric? surface or linear density?
+double tension = 35; //newtons
 
-
-double derivs()
-{
-
-
-	return 0;
-}
 
 void wave()
 {
 	VecDoub w(4);
-	VecDoub dwdx(4);  //vector of x and y, positions and velocities
+	VecDoub wSV(4);  //vector of x and y, positions (S) and velocities (V)
 
 	int n = 129; // grid dimension is n-1
 	int x = n;  // grid dimension is x-1
 	int y = n;  // grid dimension is y-1
 
-	double initialAmp = 0; //initial amplitude
-
-	double amp[x][y];
-	double originalAmp[x][y];
+	double psi[x][y];
+	double prevPsi[x][y];
+	double nextPsi[x][y];
 	bool dontCompute[x][y]; //ensures boundary conditions stay fixed
 
 
@@ -62,8 +56,9 @@ void wave()
 	{
 		for(int j=0; j<n; j++)
 		{
-			amp[i][j] = 0;
-			originalAmp[i][j] = 0;
+			psi[i][j] = 0;
+			prevPsi[i][j] = 0;
+			nextPsi[i][j] = 0;
 			dontCompute[i][j] = false;
 		}
 	}
@@ -72,13 +67,15 @@ void wave()
 	for(int j=0; j<n; j++)
 	{
 		//upper horizontal boundary condition
-		amp[0][j] = initialAmp;
-		originalAmp[0][j] = initialAmp;
+		psi[0][j] = 0;
+		prevPsi[0][j] = 0;
+		nextPsi[0][j] = 0;
 		dontCompute[0][j] = true;
 
 		//lower horizontal boundary condition
-		amp[n-1][j] = initialAmp;
-		originalAmp[n-1][j] = initialAmp;
+		psi[n-1][j] = 0;
+		prevPsi[n-1][j] = 0;
+		nextPsi[n-1][j] = 0;
 		dontCompute[n-1][j] = true;
 	}
 
@@ -86,30 +83,69 @@ void wave()
 	for(int i=0; i<n; i++)
 	{
 		//left horizontal boundary condition
-		amp[i][0] = initialAmp;
-		originalAmp[i][0] = initialAmp;
+		psi[i][0] = 0;
+		prevPsi[i][0] = 0;
+		nextPsi[i][0] = 0;
 		dontCompute[i][0] = true;
 
 		//right horizontal boundary condition
-		amp[i][n-1] = initialAmp;
-		originalAmp[i][n-1] = initialAmp;
+		psi[i][n-1] = 0;
+		prevPsi[i][n-1] = 0;
+		nextPsi[i][n-1] = 0;
 		dontCompute[i][n-1] = true;
 	}
 
-	//*****************************************************************************************************
-	//*****************************************************************************************************
+	//defines INITIAL conditions
+		prevPsi[32][32] = 1; //second quadrant (top left)
+		psi[32][32] = 1; //second quadrant (top left)
+
+//****************Maybe you should have an initial difference between prev and psi?!?!?!?!?!?!??!?!?!?!??@?%$??$?@#$@#$
+//$%#@$%^@%&#$%U$%^&#$%&%^#$U$@%^U@#&%^@#%YUH#%&$@#&$@#&$U@#^YH
+
+
+
+//*****************************************************************************************************
+//*****************************************************************************************************
 
 	//Start Calculations?????
 
+	//calculates future psi
 	for(int i=0; i<n; i++)
 	{
 		for(int j=0; j<n; j++)
 		{
-			amp[i][j] = 0;
-			originalAmp[i][j] = 0;
-			dontCompute[i][j] = false;
+			if(dontCompute[i][j] == false)
+			{
+				nextPsi[i][j] = (123123123)*( psi[i+1][j] + psi[i-1][j] +psi[i][j+1] + psi[i][j-1] - 4*psi[i][j]) - prevPsi[i][j] + 2*psi[i][j] ;
+			}
+		}
+
+
+
+
+	//DO The FILE OUTPUT HERE !!!!!!!!!!!!!!!!!!!!!!@!#$!@#%!#%
+
+
+
+	//copies current psi to previous Psi for next time iteration
+	//copies current psi into future psi
+	for(int i=0; i<n; i++)
+	{
+		for(int j=0; j<n; j++)
+		{
+			if(dontCompute[i][j] == false)
+			{
+				prevPsi[i][j] = psi[i][j];
+				psi[i][j] = nextPsi[i][j];
+			}
 		}
 	}
+
+
+
+	}
+
+
 
 
 
@@ -187,6 +223,7 @@ void wave()
 
 		 original[ix][0] = outterTemp;
 		 original[ix][n-1] = outterTemp;
+
 
 
 
