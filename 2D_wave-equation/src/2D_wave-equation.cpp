@@ -12,13 +12,14 @@
 #include "nr3.h"
 #include "gaussj.h"
 #include "ludcmp.h"
-#include <chrono>
+
 #include <vector>
 
 using namespace std;
 
 int main()
 {
+	cout <<"hello\n" <<"more";
 
 	return 0;
 
