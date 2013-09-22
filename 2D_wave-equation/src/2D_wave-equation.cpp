@@ -3,7 +3,7 @@
 // Author      : dk0r
 // Version     :
 // Copyright   : 
-// Description :
+// Description : 2D wave on a string
 //============================================================================
 
 #include <iostream>
@@ -27,11 +27,11 @@ double pastY = 0;
 double pastT = 0;
 
 //Parameters
-int mod = 10; // Prints every mod^th iteration
+int mod = 1; // Prints every mod^th iteration
 
 double dx = 1; //position stepping
 double dt = 0.01;  //time stepping
-int Max = 100; //max iterations
+int Max = 500; //max iterations
 
 double rho = 0.01; // volumetric? surface or linear density?
 double T = 40; //newtons
@@ -48,7 +48,7 @@ string make_filename( const string& basename, const string& ext )
   {
   ostringstream result;
   result << basename << fileNamerCounter << ext;
-  fileNamerCounter = fileNamerCounter + 5;
+  fileNamerCounter++;
   return result.str();
   }
 
@@ -144,8 +144,8 @@ void wave()
 
 						//File Output
 
-						if(k%mod==0)
-						{
+					//	if(k%mod==0)
+					//	{
 
 								of.open(make_filename( "/home/dk0r/git/musical-phys/2D_wave-equation/csv/psi", ".csv" ).c_str());
 
@@ -160,7 +160,7 @@ void wave()
 									 }
 
 									of.close();
-						}
+					//	}
 
 						//copies current psi to previous Psi for next time iteration
 						//copies current psi into future psi
