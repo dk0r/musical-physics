@@ -27,11 +27,18 @@ double pastY = 0;
 double pastT = 0;
 
 //Parameters
+int mod = 10; // Prints every mod^th iteration
+
+double dx = 1; //position stepping
 double dt = 0.01;  //time stepping
-int kmax = 1000; //max iterations
-double globeDT = 0; //global step tracking
-double rho = 0; // volumetric? surface or linear density?
-double tension = 35; //newtons
+int Max = 100; //max iterations
+
+double rho = 0.01; // volumetric? surface or linear density?
+double T = 40; //newtons
+
+double C = sqrt(T/rho);
+double cPrime = dx/dt;
+double COURANT = pow( C/cPrime , 2 );
 
 //Misc.
 ofstream of;
@@ -41,15 +48,12 @@ string make_filename( const string& basename, const string& ext )
   {
   ostringstream result;
   result << basename << fileNamerCounter << ext;
-  fileNamerCounter++;
+  fileNamerCounter = fileNamerCounter + 5;
   return result.str();
   }
 
 void wave()
 {
-	VecDoub w(4);
-	VecDoub wSV(4);  //vector of x and y, positions (S) and velocities (V)
-
 	int n = 129; // grid dimension is n-1
 	int x = n;  // grid dimension is x-1
 	int y = n;  // grid dimension is y-1
@@ -122,66 +126,63 @@ void wave()
 
 	//Start Calculations?????
 
-	//calculates future psi
-	for(int i=0; i<n; i++)
+
+	for(int k = 0; k<Max; k++)
 	{
-		for(int j=0; j<n; j++)
-		{
-			if(dontCompute[i][j] == false)
-			{
-				nextPsi[i][j] = (123123123)*( psi[i+1][j] + psi[i-1][j] +psi[i][j+1] + psi[i][j-1] - 4*psi[i][j]) - prevPsi[i][j] + 2*psi[i][j] ;
-			}
-		}
+						//calculates future psi
+						for(int i=0; i<n; i++)
+						{
+							for(int j=0; j<n; j++)
+							{
+								if(dontCompute[i][j] == false)
+								{
+									nextPsi[i][j] = COURANT * ( psi[i+1][j] + psi[i-1][j] +psi[i][j+1] + psi[i][j-1] - 4*psi[i][j])
+											                - prevPsi[i][j] + 2*psi[i][j] ;
+								}
+							}
+						}
 
+						//File Output
 
-	//File Output
-		of.open(make_filename( "/home/dk0r/git/musical-phys/2D_wave-equation/csv/psi", ".csv" ).c_str());
+						if(k%mod==0)
+						{
 
+								of.open(make_filename( "/home/dk0r/git/musical-phys/2D_wave-equation/csv/psi", ".csv" ).c_str());
 
-		for(int i=0; i<n ;i++)
-		 {
-			 for(int j=0; j<n ;j++)
-			 {
-					of << i << "," << j << "," << psi[i][j] << "\n";
-			 }
-		 }
+									for(int i=0; i<n ;i++)
+									 {
+										 for(int j=0; j<n ;j++)
+										 {
+											 {
+												of << i << "," << j << "," << psi[i][j] << "\n";
+											 }
+										 }
+									 }
 
-		of.close();
-		 jacobiCounter++;
+									of.close();
+						}
 
+						//copies current psi to previous Psi for next time iteration
+						//copies current psi into future psi
+						for(int i=0; i<n; i++)
+						{
+							for(int j=0; j<n; j++)
+							{
+								if(dontCompute[i][j] == false)
+								{
+									prevPsi[i][j] = psi[i][j];
+									psi[i][j] = nextPsi[i][j];
+								}
+							}
+						}
 
-
-
-
-
-
-
-
-
-
-
-
-
-	//copies current psi to previous Psi for next time iteration
-	//copies current psi into future psi
-	for(int i=0; i<n; i++)
-	{
-		for(int j=0; j<n; j++)
-		{
-			if(dontCompute[i][j] == false)
-			{
-				prevPsi[i][j] = psi[i][j];
-				psi[i][j] = nextPsi[i][j];
-			}
-		}
 	}
 
-
-	}
 }
 
 	 int main()
 	 {
 		 cout << "some shit\n";
+		wave();
 		 return 0;
 	 }
